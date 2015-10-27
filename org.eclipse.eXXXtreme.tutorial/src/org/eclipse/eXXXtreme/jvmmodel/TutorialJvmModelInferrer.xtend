@@ -3,7 +3,6 @@ package org.eclipse.eXXXtreme.jvmmodel
 import com.google.inject.Inject
 import java.sql.Connection
 import java.util.List
-import org.eclipse.eXXXtreme.h2.StaticH2Access
 import org.eclipse.eXXXtreme.tutorial.Model
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
@@ -11,6 +10,7 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor.IPostIndexingInitializing
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import java.sql.SQLException
+import org.eclipse.eXXXtreme.h2.H2MetaDataAccess
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -25,7 +25,7 @@ class TutorialJvmModelInferrer extends AbstractModelInferrer {
      */
 	@Inject extension JvmTypesBuilder
 	
-	@Inject extension StaticH2Access
+	@Inject extension H2MetaDataAccess
 
 	/**
 	 * The dispatch method {@code infer} is called for each instance of the

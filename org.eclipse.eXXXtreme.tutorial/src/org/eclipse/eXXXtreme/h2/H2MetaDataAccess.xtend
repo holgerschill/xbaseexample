@@ -1,5 +1,6 @@
 package org.eclipse.eXXXtreme.h2
 
+import java.math.BigDecimal
 import java.sql.DatabaseMetaData
 import java.sql.DriverManager
 import java.sql.ResultSet
@@ -11,7 +12,7 @@ import org.eclipse.jdt.internal.core.JavaProject
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.resource.XtextResourceSet
 
-class StaticH2Access {
+class H2MetaDataAccess {
 
 	def getTableInfos(String dbPath) {
 		Class.forName("org.h2.Driver");
@@ -43,7 +44,7 @@ class StaticH2Access {
 						name = fieldName
 						typeName = switch (resultSet.getString("TYPE_NAME")) {
 							case "VARCHAR": String.typeName
-							case "DECIMAL": java.math.BigDecimal.typeName
+							case "DECIMAL": BigDecimal.typeName
 							case "DATE": Date.typeName
 							default: String.typeName
 						}
