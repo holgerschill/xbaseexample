@@ -16,6 +16,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbench;
@@ -56,6 +57,9 @@ public class TutorialJavaElementDelegate implements IAdaptable {
 
 	public void initializeWith(IEditorPart editorInput) {
 		this.editor = editorInput;
+		IFileEditorInput input = (IFileEditorInput) editor.getEditorInput();
+		this.resource = input.getFile();
+		resourceServiceProvider = resourceServiceProviderRegisty.getResourceServiceProvider(URI.createPlatformResourceURI(resource.getFullPath().toPortableString(),true));
 	}
 
 	public void initializeWith(IFileEditorInput editorInput) {
