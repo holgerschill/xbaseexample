@@ -45,9 +45,12 @@ public class TutorialJavaElementDelegate implements IAdaptable {
 	private IEditorPart editor;
 	private IResource resource;
 	
-	@Inject
 	private IResourceServiceProvider resourceServiceProvider;
+	
+	@Inject
+	private IResourceServiceProvider.Registry resourceServiceProviderRegisty;
 
+	
 	@Inject
 	private IWorkbench workbench;
 
@@ -57,6 +60,7 @@ public class TutorialJavaElementDelegate implements IAdaptable {
 
 	public void initializeWith(IFileEditorInput editorInput) {
 		this.resource = editorInput.getFile();
+		resourceServiceProvider = resourceServiceProviderRegisty.getResourceServiceProvider(URI.createPlatformResourceURI(resource.getFullPath().toPortableString(),true));
 		IWorkbenchWindow activeWorkbenchWindow = workbench.getActiveWorkbenchWindow();
 		if (activeWorkbenchWindow != null) {
 			IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
@@ -66,6 +70,7 @@ public class TutorialJavaElementDelegate implements IAdaptable {
 
 	public void initializeWith(IResource resource) {
 		this.resource = resource;
+		resourceServiceProvider = resourceServiceProviderRegisty.getResourceServiceProvider(URI.createPlatformResourceURI(resource.getFullPath().toPortableString(),true));
 	}
 
 	@Override
