@@ -4,7 +4,7 @@
 package org.eclipse.eXXXtreme.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.xtext.common.types.xtext.ui.ITypesProposalProvider;
+import org.eclipse.xtext.xbase.ui.launching.JavaApplicationLaunchShortcut;
 
 /**
  * Use this class to register components to be used within the IDE.
@@ -13,8 +13,9 @@ public class TutorialUiModule extends org.eclipse.eXXXtreme.ui.AbstractTutorialU
 	public TutorialUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
 	}
-	@Override
-	public Class<? extends ITypesProposalProvider> bindITypesProposalProvider() {
-		return super.bindITypesProposalProvider();
+	
+	public Class<? extends JavaApplicationLaunchShortcut> bindJavaApplicationLaunchShortcut(){
+		return JavaApplicationLaunchShortcut.class;
 	}
+
 }

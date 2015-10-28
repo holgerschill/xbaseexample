@@ -1,21 +1,20 @@
-//TODO: Foreign keys -> Java References
 //TODO: much more data in the db
 //TODO: Small db for impl
-//TODO: Number / Date
 //TODO: Solution
 //TODO: describe the execise
-// TODO: Validierung unique / h2File exists
 
 DBName Test h2File "db/test"
-query myQuery  Person {  
+query myQuery Person {  
 	 for(person : it){
 	 	println(person.name + " " + person.lastname + " " + person.adress.city) 
-	 }  
-             
+	 }    
+	 return it  
+              
 } 
-
-//query myQuery2 Person {
-//	 myQuery(_myQuery)
-//}       
+   
+query myQuery2 Adress {
+	 it.head.city
+	   
+}       
   
   

@@ -585,5 +585,74 @@
             type="text">
     </fileTypes>
   </extension>
-
+<extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            class="org.eclipse.eXXXtreme.ui.launch.TutorialJavaApplicationLaunchShortcut"
+            description="%JavaLaunchShortcut.description"
+            helpContextId="org.eclipse.jdt.debug.ui.shortcut_local_java_application"
+            icon="icons/launch16.gif"
+            id="org.eclipse.xtend.ide.launching.localJavaShortcut"
+            label="%JavaApplicationShortcut.label"
+            modes="run, debug">
+         <contextualLaunch>
+             <enablement>
+             <with variable="selection">
+               <count value="1"/>
+               <iterate>
+                 <and>
+                   <not><adapt type="org.eclipse.jdt.core.IJavaElement"/></not>
+                   <adapt type="org.eclipse.eXXXtreme.ui.launch.TutorialJavaElementDelegateMainLaunch">
+                     <and>
+                       <adapt type="org.eclipse.jdt.core.IJavaElement">
+                         <test property="org.eclipse.jdt.core.isInJavaProject"/>
+                       </adapt>
+                       <or>
+                         <test property="org.eclipse.jdt.launching.hasMain"/>
+                         <test property="org.eclipse.jdt.launching.isContainer"/>
+                         <test property="org.eclipse.jdt.launching.isPackageFragment"/>
+                         <test property="org.eclipse.jdt.launching.isPackageFragmentRoot"/>
+                       </or>
+                     </and> 
+                   </adapt>
+                 </and>
+               </iterate>
+             </with>
+           </enablement>
+         </contextualLaunch>
+         <configurationType
+               id="org.eclipse.jdt.launching.localJavaApplication">
+         </configurationType>
+         <description
+               description="%JavaApplicationShortcut.description.run"
+               mode="run">
+         </description>
+         <description
+               description="%JavaApplicationShortcut.description.debug"
+               mode="debug">
+         </description>
+      </shortcut>
+    </extension>
+    <extension point="org.eclipse.core.runtime.adapters">
+     <factory 
+        class="org.eclipse.eXXXtreme.ui.TutorialExecutableExtensionFactory:org.eclipse.eXXXtreme.ui.launch.TutorialJavaElementDelegateAdapterFactory"
+        adaptableType="org.eclipse.ui.IFileEditorInput">
+        <adapter type="org.eclipse.eXXXtreme.ui.launch.TutorialJavaElementDelegateMainLaunch"/>
+     </factory>
+     <factory 
+        class="org.eclipse.eXXXtreme.ui.TutorialExecutableExtensionFactory:org.eclipse.eXXXtreme.ui.launch.TutorialJavaElementDelegateAdapterFactory"
+        adaptableType="org.eclipse.ui.IEditorPart">
+        <adapter type="org.eclipse.eXXXtreme.ui.launch.TutorialJavaElementDelegateMainLaunch"/>
+     </factory>
+     <factory 
+        class="org.eclipse.eXXXtreme.ui.TutorialExecutableExtensionFactory:org.eclipse.eXXXtreme.ui.launch.TutorialJavaElementDelegateAdapterFactory" 
+        adaptableType="org.eclipse.core.resources.IResource">
+        <adapter type="org.eclipse.eXXXtreme.ui.launch.TutorialJavaElementDelegateMainLaunch"/>
+     </factory>
+     <factory 
+        class="org.eclipse.eXXXtreme.ui.TutorialExecutableExtensionFactory:org.eclipse.eXXXtreme.ui.launch.TutorialJavaElementDelegateAdapterFactory"
+        adaptableType="org.eclipse.eXXXtreme.ui.launch.TutorialJavaElementDelegateMainLaunch">
+        <adapter type="org.eclipse.jdt.core.IJavaElement"/>
+     </factory>
+  </extension>
 </plugin>

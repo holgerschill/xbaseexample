@@ -2,6 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.eclipse.eXXXtreme.tutorial.ui
 Bundle-Vendor: My Company
+Bundle-Localization: plugin
 Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: org.eclipse.eXXXtreme.tutorial.ui; singleton:=true
 Bundle-ActivationPolicy: lazy

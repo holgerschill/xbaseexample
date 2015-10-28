@@ -3,7 +3,13 @@
  */
 package org.eclipse.eXXXtreme.validation
 
-//import org.eclipse.xtext.validation.Check
+import com.google.inject.Inject
+import java.io.File
+import java.util.Set
+import org.eclipse.eXXXtreme.h2.H2MetaDataAccess
+import org.eclipse.eXXXtreme.tutorial.Model
+import org.eclipse.eXXXtreme.tutorial.TutorialPackage
+import org.eclipse.xtext.validation.Check
 
 /**
  * This class contains custom validation rules. 
@@ -11,15 +17,33 @@ package org.eclipse.eXXXtreme.validation
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
 class TutorialValidator extends AbstractTutorialValidator {
-
-//  public static val INVALID_NAME = 'invalidName'
-//
-//	@Check
-//	def checkGreetingStartsWithCapital(Greeting greeting) {
-//		if (!Character.isUpperCase(greeting.name.charAt(0))) {
-//			warning('Name should start with a capital', 
-//					MyDslPackage.Literals.GREETING__NAME,
-//					INVALID_NAME)
-//		}
-//	}
+	
+	@Inject
+	extension H2MetaDataAccess 
+	
+	@Check
+	def checkIfH2FileExists(Model model){
+		val h2Path = model.h2Path
+		if(h2Path.startsWith("/")){
+			error("Path should be relativ to project like 'db/test'.",TutorialPackage.Literals.MODEL__H2_PATH)
+		}
+		val file = new File(model.getProjectPath +  "/" + h2Path + ".mv.db")
+		if(!file.exists){
+			error("File does not exist!",TutorialPackage.Literals.MODEL__H2_PATH)
+		}
+	}
+	@Check
+	def checkUniqueQueryNames(Model model){
+		val Set<String> names = newHashSet()
+		for(query : model.queries){
+			if(!names.add(query.name)){
+				error("Name of query is not unique!",query,TutorialPackage.Literals.QUERY__NAME)
+			}
+		}
+	}
+	
+	
+	
+	
+	
 }

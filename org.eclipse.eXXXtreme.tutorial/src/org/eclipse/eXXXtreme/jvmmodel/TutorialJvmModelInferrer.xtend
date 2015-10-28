@@ -2,15 +2,13 @@ package org.eclipse.eXXXtreme.jvmmodel
 
 import com.google.inject.Inject
 import java.sql.Connection
+import java.sql.SQLException
 import java.util.List
+import org.eclipse.eXXXtreme.h2.H2MetaDataAccess
 import org.eclipse.eXXXtreme.tutorial.Model
-import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
-import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor.IPostIndexingInitializing
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import java.sql.SQLException
-import org.eclipse.eXXXtreme.h2.H2MetaDataAccess
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -27,31 +25,7 @@ class TutorialJvmModelInferrer extends AbstractModelInferrer {
 	
 	@Inject extension H2MetaDataAccess
 
-	/**
-	 * The dispatch method {@code infer} is called for each instance of the
-	 * given element's type that is contained in a resource.
-	 * 
-	 * @param element
-	 *            the model to create one or more
-	 *            {@link JvmDeclaredType declared
-	 *            types} from.
-	 * @param acceptor
-	 *            each created
-	 *            {@link JvmDeclaredType type}
-	 *            without a container should be passed to the acceptor in order
-	 *            get attached to the current resource. The acceptor's
-	 *            {@link IJvmDeclaredTypeAcceptor#accept(org.eclipse.xtext.common.types.JvmDeclaredType)
-	 *            accept(..)} method takes the constructed empty type for the
-	 *            pre-indexing phase. This one is further initialized in the
-	 *            indexing phase using the closure you pass to the returned
-	 *            {@link IPostIndexingInitializing#initializeLater(org.eclipse.xtext.xbase.lib.Procedures.Procedure1)
-	 *            initializeLater(..)}.
-	 * @param isPreIndexingPhase
-	 *            whether the method is called in a pre-indexing phase, i.e.
-	 *            when the global index is not yet fully updated. You must not
-	 *            rely on linking using the index if isPreIndexingPhase is
-	 *            <code>true</code>.
-	 */
+
    	def dispatch void infer(Model model, IJvmDeclaredTypeAcceptor acceptor, boolean isPreIndexingPhase) {
    		val path = getProjectPath(model)
    		acceptor.accept(model.toClass(model.name)) [
@@ -62,14 +36,14 @@ class TutorialJvmModelInferrer extends AbstractModelInferrer {
    			]
    			members += model.toMethod("main",typeRef(void))[
    				parameters += model.toParameter("args",typeRef(String).addArrayTypeDimension)
-   				// TODO Try catch finally close
    				static = true
+   				varArgs = true
    				exceptions += typeRef(SQLException)
    				body = 
    				'''
 				try{
 					«FOR query : model.queries»
-						«model.name».«query.name»(«model.name»._«query.name»);
+						«model.name».«query.name»(«model.name»._«query.name»TableContent);
 					«ENDFOR»
 				} catch (Exception e) {}
 				finally {
@@ -79,7 +53,7 @@ class TutorialJvmModelInferrer extends AbstractModelInferrer {
    			]
 			for(query : model.queries) {
 				val tableType = typeRef(List,query.table)
-				members+= query.toField("_" + query.name, tableType)[
+				members+= query.toField("_" + query.name+ "TableContent", tableType)[
 					static = true
 					initializer = '''loadTable(conn, «query.table».class)'''
 				]
@@ -88,6 +62,12 @@ class TutorialJvmModelInferrer extends AbstractModelInferrer {
 					parameters += query.toParameter("it",typeRef(List,query.table.cloneWithProxies))
 					body = query.expression
 				]
+				val returnType = inferredType(query.expression)
+				members+= query.toMethod(query.name, returnType) [
+					static = true
+					body = '''return «model.name».«query.name»(«model.name»._«query.name»TableContent);'''
+				]
+				
 			}
    		]
 		
