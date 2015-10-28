@@ -75,9 +75,10 @@ class TutorialJvmModelInferrer extends AbstractModelInferrer {
    			acceptor.accept(model.toClass(tableInfo.name))[
    				superTypes += typeRef("org.eclipse.eXXXtreme.tutorial.ITable")
    				for(column : tableInfo.columns){
-   					members += model.toField(column.name,typeRef(column.typeName))
-   					members += model.toGetter(column.name,typeRef(column.typeName))
-   					members += model.toSetter(column.name,typeRef(column.typeName))
+   					val columnName = column.name.toLowerCase
+   					members += model.toField(columnName,typeRef(column.typeName))
+   					members += model.toGetter(columnName,typeRef(column.typeName))
+   					members += model.toSetter(columnName,typeRef(column.typeName))
    				}
    			]
    		}

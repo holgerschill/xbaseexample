@@ -1,8 +1,3 @@
-//TODO: much more data in the db
-//TODO: Small db for impl
-//TODO: Solution
-//TODO: describe the execise
-
 DBName Test h2File "db/test"
 query myQuery Person {  
 	 for(person : it){
