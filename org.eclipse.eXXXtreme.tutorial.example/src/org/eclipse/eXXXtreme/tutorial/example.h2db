@@ -1,15 +1,13 @@
-DBName Test h2File "db/test"
+DBName Example h2File "db/test"
 query myQuery Person {  
 	 for(person : it){
 	 	println(person.name + " " + person.lastname + " " + person.adress.city) 
 	 }    
 	 return it  
-              
 } 
    
 query myQuery2 Adress {
 	 it.head.city
-	   
 }       
   
   

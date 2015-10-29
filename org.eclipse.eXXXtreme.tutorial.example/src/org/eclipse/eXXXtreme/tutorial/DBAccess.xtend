@@ -7,7 +7,7 @@ import java.util.List
 
 class DBAccess {
 
-	def static <E> List<E> loadTable(Connection conn, Class<? extends ITable> clazz) {
+	def static <E extends ITable> List<E> loadTable(Connection conn, Class<E> clazz) {
 		val stmt = conn.createStatement()
 		val resultSet = stmt.executeQuery("SELECT * FROM PUBLIC." + clazz.simpleName.toUpperCase)
 		val List<E> result = newArrayList
@@ -17,14 +17,14 @@ class DBAccess {
 		result
 	}
 	
-	def static <E> E  createClassInstance(Connection conn, Class<?> clazz, String PK_Column_Name, Object keyValue){
+	def static <E> E  createClassInstance(Connection conn, Class<E> clazz, String PK_Column_Name, Object keyValue){
 		val stmt = conn.createStatement()
 		val resultSet = stmt.executeQuery("SELECT * FROM PUBLIC." + clazz.simpleName.toUpperCase + " WHERE " + PK_Column_Name + " = " + keyValue)
 		resultSet.next
 		createClassInstance(conn,resultSet,clazz)
 	}
 	
-	def static <E> E  createClassInstance(Connection conn,ResultSet resultSet,  Class<?> clazz){
+	def static <E> E  createClassInstance(Connection conn,ResultSet resultSet, Class<E> clazz){
 		val metaData = conn.metaData
 		val foreignKeys = metaData.getImportedKeys(null, null, clazz.simpleName.toUpperCase)
 		val fkMap = <String, String>newHashMap()
@@ -33,7 +33,7 @@ class DBAccess {
 			val PK_COLUMN = foreignKeys.getString("PKCOLUMN_NAME").toLowerCase.toUpperCase
 			fkMap.put(COLUMN_NAME, PK_COLUMN)
 		}
-		clazz.newInstance as E =>
+		clazz.newInstance =>
 			[
 				val declaredFields = clazz.declaredFields
 				for (f : declaredFields) {

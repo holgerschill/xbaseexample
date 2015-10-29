@@ -1,137 +1,129 @@
 package org.eclipse.eXXXtreme.h2;
 
-import com.google.common.base.Objects;
+import com.google.common.base.CaseFormat;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.eXXXtreme.h2.ColumnInfo;
 import org.eclipse.eXXXtreme.h2.TableInfo;
 import org.eclipse.eXXXtreme.tutorial.Model;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Exceptions;
-import org.eclipse.xtext.xbase.lib.Functions.Function1;
-import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ObjectExtensions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
-import org.eclipse.xtext.xbase.lib.StringExtensions;
+import org.h2.Driver;
 
 @SuppressWarnings("all")
 public class H2MetaDataAccess {
+  /**
+   * Read the table information from the database at the given absolute location
+   */
   public List<TableInfo> getTableInfos(final String dbPath) {
     try {
       List<TableInfo> _xblockexpression = null;
       {
-        Class.forName("org.h2.Driver");
-        final Connection conn = DriverManager.getConnection(("jdbc:h2:" + dbPath), "sa", "");
-        final DatabaseMetaData m = conn.getMetaData();
-        final ResultSet rs = m.getTables(null, "PUBLIC", "%", null);
+        Driver.class.getSimpleName();
         final List<TableInfo> tables = CollectionLiterals.<TableInfo>newArrayList();
-        while (rs.next()) {
-          {
-            final String tableName = rs.getString("TABLE_NAME");
-            TableInfo _tableInfo = new TableInfo();
-            final Procedure1<TableInfo> _function = (TableInfo it) -> {
-              try {
-                String _lowerCase = tableName.toLowerCase();
-                String _firstUpper = StringExtensions.toFirstUpper(_lowerCase);
-                it.setName(_firstUpper);
-                ArrayList<ColumnInfo> _newArrayList = CollectionLiterals.<ColumnInfo>newArrayList();
-                it.setColumns(_newArrayList);
-                final DatabaseMetaData metadata = conn.getMetaData();
-                final ResultSet foreignKeys = metadata.getImportedKeys(null, null, tableName);
-                final HashSet<String> foreignTable = CollectionLiterals.<String>newHashSet();
-                while (foreignKeys.next()) {
-                  List<ColumnInfo> _columns = it.getColumns();
-                  ColumnInfo _columnInfo = new ColumnInfo();
-                  final Procedure1<ColumnInfo> _function_1 = (ColumnInfo it_1) -> {
-                    try {
+        final Connection conn = DriverManager.getConnection(("jdbc:h2:" + dbPath), "sa", "");
+        try {
+          final DatabaseMetaData metadata = conn.getMetaData();
+          final ResultSet rs = metadata.getTables(null, "PUBLIC", "%", null);
+          while (rs.next()) {
+            {
+              final String tableName = rs.getString("TABLE_NAME");
+              TableInfo _tableInfo = new TableInfo();
+              final Procedure1<TableInfo> _function = (TableInfo it) -> {
+                try {
+                  String _camelCase = this.toCamelCase(tableName);
+                  it.setName(_camelCase);
+                  ArrayList<ColumnInfo> _newArrayList = CollectionLiterals.<ColumnInfo>newArrayList();
+                  it.setColumns(_newArrayList);
+                  final ResultSet foreignKeys = metadata.getImportedKeys(null, null, tableName);
+                  final HashMap<String, String> fkToTypeName = CollectionLiterals.<String, String>newHashMap();
+                  while (foreignKeys.next()) {
+                    {
                       String _string = foreignKeys.getString("FKCOLUMN_NAME");
-                      String _lowerCase_1 = _string.toLowerCase();
-                      final String fielName = StringExtensions.toFirstUpper(_lowerCase_1);
-                      it_1.setName(fielName);
-                      foreignTable.add(fielName);
+                      final String fieldName = this.toCamelCase(_string);
                       String _string_1 = foreignKeys.getString("PKTABLE_NAME");
-                      String _lowerCase_2 = _string_1.toLowerCase();
-                      String _firstUpper_1 = StringExtensions.toFirstUpper(_lowerCase_2);
-                      it_1.setTypeName(_firstUpper_1);
-                    } catch (Throwable _e) {
-                      throw Exceptions.sneakyThrow(_e);
+                      final String typeName = this.toCamelCase(_string_1);
+                      fkToTypeName.put(fieldName, typeName);
                     }
-                  };
-                  ColumnInfo _doubleArrow = ObjectExtensions.<ColumnInfo>operator_doubleArrow(_columnInfo, _function_1);
-                  _columns.add(_doubleArrow);
-                }
-                final ResultSet resultSet = metadata.getColumns(null, null, tableName, null);
-                while (resultSet.next()) {
-                  {
-                    String _string = resultSet.getString("COLUMN_NAME");
-                    String _lowerCase_1 = _string.toLowerCase();
-                    final String fieldName = StringExtensions.toFirstUpper(_lowerCase_1);
-                    final Function1<String, Boolean> _function_1 = (String it_1) -> {
-                      return Boolean.valueOf(Objects.equal(it_1, fieldName));
-                    };
-                    boolean _exists = IterableExtensions.<String>exists(foreignTable, _function_1);
-                    boolean _not = (!_exists);
-                    if (_not) {
+                  }
+                  final ResultSet resultSet = metadata.getColumns(null, null, tableName, null);
+                  while (resultSet.next()) {
+                    {
+                      String _string = resultSet.getString("COLUMN_NAME");
+                      final String fieldName = this.toCamelCase(_string);
                       List<ColumnInfo> _columns = it.getColumns();
                       ColumnInfo _columnInfo = new ColumnInfo();
-                      final Procedure1<ColumnInfo> _function_2 = (ColumnInfo it_1) -> {
+                      final Procedure1<ColumnInfo> _function_1 = (ColumnInfo it_1) -> {
                         try {
                           it_1.setName(fieldName);
-                          String _switchResult = null;
-                          String _string_1 = resultSet.getString("TYPE_NAME");
-                          switch (_string_1) {
-                            case "VARCHAR":
-                              _switchResult = String.class.getTypeName();
-                              break;
-                            case "DECIMAL":
-                              _switchResult = BigDecimal.class.getTypeName();
-                              break;
-                            case "DATE":
-                              _switchResult = Date.class.getTypeName();
-                              break;
-                            default:
-                              _switchResult = String.class.getTypeName();
-                              break;
+                          String _elvis = null;
+                          String _get = fkToTypeName.get(fieldName);
+                          if (_get != null) {
+                            _elvis = _get;
+                          } else {
+                            String _switchResult = null;
+                            String _string_1 = resultSet.getString("TYPE_NAME");
+                            switch (_string_1) {
+                              case "VARCHAR":
+                                _switchResult = String.class.getTypeName();
+                                break;
+                              case "DECIMAL":
+                                _switchResult = BigDecimal.class.getTypeName();
+                                break;
+                              case "DATE":
+                                _switchResult = Date.class.getTypeName();
+                                break;
+                              default:
+                                _switchResult = String.class.getTypeName();
+                                break;
+                            }
+                            _elvis = _switchResult;
                           }
-                          it_1.setTypeName(_switchResult);
+                          it_1.setTypeName(_elvis);
                         } catch (Throwable _e) {
                           throw Exceptions.sneakyThrow(_e);
                         }
                       };
-                      ColumnInfo _doubleArrow = ObjectExtensions.<ColumnInfo>operator_doubleArrow(_columnInfo, _function_2);
+                      ColumnInfo _doubleArrow = ObjectExtensions.<ColumnInfo>operator_doubleArrow(_columnInfo, _function_1);
                       _columns.add(_doubleArrow);
                     }
                   }
+                } catch (Throwable _e) {
+                  throw Exceptions.sneakyThrow(_e);
                 }
-              } catch (Throwable _e) {
-                throw Exceptions.sneakyThrow(_e);
-              }
-            };
-            TableInfo _doubleArrow = ObjectExtensions.<TableInfo>operator_doubleArrow(_tableInfo, _function);
-            tables.add(_doubleArrow);
+              };
+              TableInfo _doubleArrow = ObjectExtensions.<TableInfo>operator_doubleArrow(_tableInfo, _function);
+              tables.add(_doubleArrow);
+            }
           }
+        } finally {
+          conn.close();
         }
-        conn.close();
         _xblockexpression = tables;
       }
       return _xblockexpression;
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }
+  }
+  
+  private String toCamelCase(final String name) {
+    return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name);
   }
   
   public String getProjectPath(final Model model) {
@@ -141,11 +133,10 @@ public class H2MetaDataAccess {
       ResourceSet _resourceSet = _eResource.getResourceSet();
       final XtextResourceSet xtextResourceSet = ((XtextResourceSet) _resourceSet);
       Object _classpathURIContext = xtextResourceSet.getClasspathURIContext();
-      final JavaProject classpathURIContext = ((JavaProject) _classpathURIContext);
-      final IJavaProject javaproject = classpathURIContext.<IJavaProject>getAdapter(IJavaProject.class);
-      final IProject project = javaproject.getProject();
-      IPath _location = project.getLocation();
-      _xblockexpression = _location.toPortableString();
+      final IJavaProject javaProject = ((IJavaProject) _classpathURIContext);
+      final IProject project = javaProject.getProject();
+      URI _locationURI = project.getLocationURI();
+      _xblockexpression = _locationURI.getPath();
     }
     return _xblockexpression;
   }

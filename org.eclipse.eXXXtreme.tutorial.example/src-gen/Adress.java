@@ -3,23 +3,23 @@ import org.eclipse.eXXXtreme.tutorial.ITable;
 
 @SuppressWarnings("all")
 public class Adress implements ITable {
-  private BigDecimal Id;
+  private BigDecimal id;
   
   public BigDecimal getId() {
-    return this.Id;
+    return this.id;
   }
   
-  public void setId(final BigDecimal Id) {
-    this.Id = Id;
+  public void setId(final BigDecimal id) {
+    this.id = id;
   }
   
-  private String City;
+  private String city;
   
   public String getCity() {
-    return this.City;
+    return this.city;
   }
   
-  public void setCity(final String City) {
-    this.City = City;
+  public void setCity(final String city) {
+    this.city = city;
   }
 }

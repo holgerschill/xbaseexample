@@ -3,43 +3,43 @@ import org.eclipse.eXXXtreme.tutorial.ITable;
 
 @SuppressWarnings("all")
 public class Person implements ITable {
-  private Adress Adress;
-  
-  public Adress getAdress() {
-    return this.Adress;
-  }
-  
-  public void setAdress(final Adress Adress) {
-    this.Adress = Adress;
-  }
-  
-  private String Name;
+  private String name;
   
   public String getName() {
-    return this.Name;
+    return this.name;
   }
   
-  public void setName(final String Name) {
-    this.Name = Name;
+  public void setName(final String name) {
+    this.name = name;
   }
   
-  private String Lastname;
+  private String lastname;
   
   public String getLastname() {
-    return this.Lastname;
+    return this.lastname;
   }
   
-  public void setLastname(final String Lastname) {
-    this.Lastname = Lastname;
+  public void setLastname(final String lastname) {
+    this.lastname = lastname;
   }
   
-  private Date Dateofbirth;
+  private Date dateofbirth;
   
   public Date getDateofbirth() {
-    return this.Dateofbirth;
+    return this.dateofbirth;
   }
   
-  public void setDateofbirth(final Date Dateofbirth) {
-    this.Dateofbirth = Dateofbirth;
+  public void setDateofbirth(final Date dateofbirth) {
+    this.dateofbirth = dateofbirth;
+  }
+  
+  private Adress adress;
+  
+  public Adress getAdress() {
+    return this.adress;
+  }
+  
+  public void setAdress(final Adress adress) {
+    this.adress = adress;
   }
 }
