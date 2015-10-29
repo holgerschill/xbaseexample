@@ -1,4 +1,7 @@
 *.class
+*.xtendbin
+*.java._trace
+*.java_trace
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/

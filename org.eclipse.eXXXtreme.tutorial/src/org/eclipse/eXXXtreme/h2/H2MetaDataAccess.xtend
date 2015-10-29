@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.IJavaProject
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.resource.XtextResourceSet
 import org.h2.Driver
+import java.io.File
 
 class H2MetaDataAccess {
 
@@ -17,6 +18,9 @@ class H2MetaDataAccess {
 	 * Read the table information from the database at the given absolute location
 	 */
 	def List<TableInfo> getTableInfos(String dbPath) {
+		if (!new File(dbPath + ".mv.db").exists) {
+			return emptyList
+		}
 		Driver.simpleName // initialize driver
 		val List<TableInfo> tables = newArrayList
 		val conn = DriverManager.getConnection("jdbc:h2:" + dbPath, "sa", "")
@@ -64,8 +68,12 @@ class H2MetaDataAccess {
 	def String getProjectPath(Model model) {
 		val xtextResourceSet = model.eResource.resourceSet as XtextResourceSet
 		val javaProject = xtextResourceSet.classpathURIContext as IJavaProject
-		val project = javaProject.project
-		project.locationURI.path
+		if (javaProject !== null) {
+			val project = javaProject.project
+			return project.locationURI.path
+		} else {
+			return "./"
+		}
 	}
 }
 

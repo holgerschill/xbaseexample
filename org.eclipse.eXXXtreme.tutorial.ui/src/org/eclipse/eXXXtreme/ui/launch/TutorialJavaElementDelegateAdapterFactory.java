@@ -8,6 +8,8 @@ import org.eclipse.ui.IFileEditorInput;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+
+@SuppressWarnings("all")
 @Singleton
 public class TutorialJavaElementDelegateAdapterFactory implements IAdapterFactory {
 
@@ -17,9 +19,8 @@ public class TutorialJavaElementDelegateAdapterFactory implements IAdapterFactor
 	@Inject
 	private Provider<TutorialJavaElementDelegateMainLaunch> mainDelegateProvider;
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Object adaptableObject, @SuppressWarnings("rawtypes")  Class adapterType) {
+	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adaptableObject instanceof TutorialJavaElementDelegate) {
 			return ((TutorialJavaElementDelegate) adaptableObject).getAdapter(adapterType);
 		}
@@ -47,7 +48,6 @@ public class TutorialJavaElementDelegateAdapterFactory implements IAdapterFactor
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
 	public Class[] getAdapterList() {
 		return new Class[] { TutorialJavaElementDelegate.class };
 	}

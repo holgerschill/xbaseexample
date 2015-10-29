@@ -10,7 +10,7 @@ public class TutorialJavaApplicationLaunchShortcut extends JavaApplicationLaunch
 	@Override
 	public void launch(ISelection selection, String mode) {
 		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection newSelection = TutorialLaunchShortcurUtil
+			IStructuredSelection newSelection = TutorialLaunchShortcutUtil
 					.replaceWithJavaElementDelegates((IStructuredSelection) selection, TutorialJavaElementDelegateMainLaunch.class);
 			super.launch(newSelection, mode);
 		}

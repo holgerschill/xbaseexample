@@ -7,7 +7,7 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 @SuppressWarnings("all")
 public class Example extends DBAccess {
-  private static Connection conn = getConnection("/C:/Users/itemis Kiel/git/xbaseexample/org.eclipse.eXXXtreme.tutorial.example/db/test");
+  private static Connection conn = getConnection("/Users/zarnekow/projects/xbaseexample/org.eclipse.eXXXtreme.tutorial.example/db/test");
   
   public static void main(final String... args) throws SQLException {
     try{

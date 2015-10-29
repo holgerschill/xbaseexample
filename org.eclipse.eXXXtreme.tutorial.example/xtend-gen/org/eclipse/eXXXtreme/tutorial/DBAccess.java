@@ -1,5 +1,6 @@
 package org.eclipse.eXXXtreme.tutorial;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Objects;
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -10,6 +11,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import org.eclipse.eXXXtreme.tutorial.ITable;
+import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.ObjectExtensions;
@@ -22,10 +24,11 @@ public class DBAccess {
       List<E> _xblockexpression = null;
       {
         final Statement stmt = conn.createStatement();
-        String _simpleName = clazz.getSimpleName();
-        String _upperCase = _simpleName.toUpperCase();
-        String _plus = ("SELECT * FROM PUBLIC." + _upperCase);
-        final ResultSet resultSet = stmt.executeQuery(_plus);
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append("SELECT * FROM PUBLIC.");
+        String _tableName = DBAccess.toTableName(clazz);
+        _builder.append(_tableName, "");
+        final ResultSet resultSet = stmt.executeQuery(_builder.toString());
         final List<E> result = CollectionLiterals.<E>newArrayList();
         while (resultSet.next()) {
           E _createClassInstance = DBAccess.<E>createClassInstance(conn, resultSet, clazz);
@@ -39,19 +42,25 @@ public class DBAccess {
     }
   }
   
+  public static String toTableName(final Class<?> clazz) {
+    String _simpleName = clazz.getSimpleName();
+    return CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, _simpleName);
+  }
+  
   public static <E extends Object> E createClassInstance(final Connection conn, final Class<E> clazz, final String PK_Column_Name, final Object keyValue) {
     try {
       E _xblockexpression = null;
       {
         final Statement stmt = conn.createStatement();
-        String _simpleName = clazz.getSimpleName();
-        String _upperCase = _simpleName.toUpperCase();
-        String _plus = ("SELECT * FROM PUBLIC." + _upperCase);
-        String _plus_1 = (_plus + " WHERE ");
-        String _plus_2 = (_plus_1 + PK_Column_Name);
-        String _plus_3 = (_plus_2 + " = ");
-        String _plus_4 = (_plus_3 + keyValue);
-        final ResultSet resultSet = stmt.executeQuery(_plus_4);
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append("SELECT * FROM PUBLIC.");
+        String _tableName = DBAccess.toTableName(clazz);
+        _builder.append(_tableName, "");
+        _builder.append(" WHERE ");
+        _builder.append(PK_Column_Name, "");
+        _builder.append(" = ");
+        _builder.append(keyValue, "");
+        final ResultSet resultSet = stmt.executeQuery(_builder.toString());
         resultSet.next();
         _xblockexpression = DBAccess.<E>createClassInstance(conn, resultSet, clazz);
       }
@@ -73,11 +82,9 @@ public class DBAccess {
         while (foreignKeys.next()) {
           {
             String _string = foreignKeys.getString("FKCOLUMN_NAME");
-            String _lowerCase = _string.toLowerCase();
-            final String COLUMN_NAME = _lowerCase.toLowerCase();
+            final String COLUMN_NAME = _string.toLowerCase();
             String _string_1 = foreignKeys.getString("PKCOLUMN_NAME");
-            String _lowerCase_1 = _string_1.toLowerCase();
-            final String PK_COLUMN = _lowerCase_1.toUpperCase();
+            final String PK_COLUMN = _string_1.toLowerCase();
             fkMap.put(COLUMN_NAME, PK_COLUMN);
           }
         }

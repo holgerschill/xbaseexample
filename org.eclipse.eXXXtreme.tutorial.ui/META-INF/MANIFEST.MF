@@ -6,24 +6,25 @@ Bundle-Localization: plugin
 Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: org.eclipse.eXXXtreme.tutorial.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.eclipse.eXXXtreme.tutorial;visibility:=reexport,
+Require-Bundle: org.eclipse.eXXXtreme.tutorial,
+ org.eclipse.eXXXtreme.tutorial.ide,
  org.eclipse.xtext.ui,
+ org.eclipse.xtext.ui.shared,
+ org.eclipse.xtext.ui.codetemplates.ui,
  org.eclipse.ui.editors;bundle-version="3.5.0",
  org.eclipse.ui.ide;bundle-version="3.5.0",
- org.eclipse.xtext.ui.shared,
- org.eclipse.xtext.xbase.ui,
- org.eclipse.ui,
- org.eclipse.xtext.builder,
- org.eclipse.xtext.xbase.lib,
- org.eclipse.xtext.common.types.ui,
  org.eclipse.jdt.debug.ui,
- org.eclipse.xtext.ui.codetemplates.ui,
  org.eclipse.compare,
- org.eclipse.jdt.core;bundle-version="3.11.1"
+ org.eclipse.ui,
+ org.eclipse.xtend.lib;resolution:=optional,
+ org.eclipse.xtext.common.types.ui,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.xtext.xbase.ui,
+ org.eclipse.xtext.builder,
+ org.eclipse.jdt.core
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.eclipse.eXXXtreme.ui.quickfix,
- org.eclipse.eXXXtreme.ui.contentassist,
- org.eclipse.eXXXtreme.ui.internal,
- org.eclipse.eXXXtreme.ui.contentassist.antlr
+Export-Package: org.eclipse.eXXXtreme.ui.internal,
+ org.eclipse.eXXXtreme.ui.quickfix,
+ org.eclipse.eXXXtreme.ui.contentassist
 Bundle-Activator: org.eclipse.eXXXtreme.ui.internal.TutorialActivator

@@ -1,6 +1,7 @@
 package org.eclipse.eXXXtreme.h2;
 
 import com.google.common.base.CaseFormat;
+import java.io.File;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.sql.Connection;
@@ -34,6 +35,12 @@ public class H2MetaDataAccess {
     try {
       List<TableInfo> _xblockexpression = null;
       {
+        File _file = new File((dbPath + ".mv.db"));
+        boolean _exists = _file.exists();
+        boolean _not = (!_exists);
+        if (_not) {
+          return CollectionLiterals.<TableInfo>emptyList();
+        }
         Driver.class.getSimpleName();
         final List<TableInfo> tables = CollectionLiterals.<TableInfo>newArrayList();
         final Connection conn = DriverManager.getConnection(("jdbc:h2:" + dbPath), "sa", "");
@@ -127,17 +134,17 @@ public class H2MetaDataAccess {
   }
   
   public String getProjectPath(final Model model) {
-    String _xblockexpression = null;
-    {
-      Resource _eResource = model.eResource();
-      ResourceSet _resourceSet = _eResource.getResourceSet();
-      final XtextResourceSet xtextResourceSet = ((XtextResourceSet) _resourceSet);
-      Object _classpathURIContext = xtextResourceSet.getClasspathURIContext();
-      final IJavaProject javaProject = ((IJavaProject) _classpathURIContext);
+    Resource _eResource = model.eResource();
+    ResourceSet _resourceSet = _eResource.getResourceSet();
+    final XtextResourceSet xtextResourceSet = ((XtextResourceSet) _resourceSet);
+    Object _classpathURIContext = xtextResourceSet.getClasspathURIContext();
+    final IJavaProject javaProject = ((IJavaProject) _classpathURIContext);
+    if ((javaProject != null)) {
       final IProject project = javaProject.getProject();
       URI _locationURI = project.getLocationURI();
-      _xblockexpression = _locationURI.getPath();
+      return _locationURI.getPath();
+    } else {
+      return "./";
     }
-    return _xblockexpression;
   }
 }
