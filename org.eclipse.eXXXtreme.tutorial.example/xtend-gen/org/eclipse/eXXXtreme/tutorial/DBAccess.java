@@ -44,13 +44,21 @@ public class DBAccess {
   
   public static String toTableName(final Class<?> clazz) {
     String _simpleName = clazz.getSimpleName();
-    return CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, _simpleName);
+    return DBAccess.toSQLName(_simpleName);
+  }
+  
+  public static String toSQLName(final String javaName) {
+    final String result = CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, javaName);
+    return result;
   }
   
   public static <E extends Object> E createClassInstance(final Connection conn, final Class<E> clazz, final String PK_Column_Name, final Object keyValue) {
     try {
       E _xblockexpression = null;
       {
+        if ((keyValue == null)) {
+          return null;
+        }
         final Statement stmt = conn.createStatement();
         StringConcatenation _builder = new StringConcatenation();
         _builder.append("SELECT * FROM PUBLIC.");
@@ -58,8 +66,9 @@ public class DBAccess {
         _builder.append(_tableName, "");
         _builder.append(" WHERE ");
         _builder.append(PK_Column_Name, "");
-        _builder.append(" = ");
+        _builder.append(" = \'");
         _builder.append(keyValue, "");
+        _builder.append("\' ");
         final ResultSet resultSet = stmt.executeQuery(_builder.toString());
         resultSet.next();
         _xblockexpression = DBAccess.<E>createClassInstance(conn, resultSet, clazz);
@@ -75,16 +84,13 @@ public class DBAccess {
       E _xblockexpression = null;
       {
         final DatabaseMetaData metaData = conn.getMetaData();
-        String _simpleName = clazz.getSimpleName();
-        String _upperCase = _simpleName.toUpperCase();
-        final ResultSet foreignKeys = metaData.getImportedKeys(null, null, _upperCase);
+        String _tableName = DBAccess.toTableName(clazz);
+        final ResultSet foreignKeys = metaData.getImportedKeys(null, null, _tableName);
         final HashMap<String, String> fkMap = CollectionLiterals.<String, String>newHashMap();
         while (foreignKeys.next()) {
           {
-            String _string = foreignKeys.getString("FKCOLUMN_NAME");
-            final String COLUMN_NAME = _string.toLowerCase();
-            String _string_1 = foreignKeys.getString("PKCOLUMN_NAME");
-            final String PK_COLUMN = _string_1.toLowerCase();
+            final String COLUMN_NAME = foreignKeys.getString("FKCOLUMN_NAME");
+            final String PK_COLUMN = foreignKeys.getString("PKCOLUMN_NAME");
             fkMap.put(COLUMN_NAME, PK_COLUMN);
           }
         }
@@ -96,11 +102,9 @@ public class DBAccess {
               {
                 f.setAccessible(true);
                 String _name = f.getName();
-                String _upperCase_1 = _name.toUpperCase();
-                final Object value = resultSet.getObject(_upperCase_1);
-                String _name_1 = f.getName();
-                String _lowerCase = _name_1.toLowerCase();
-                final String pk_column = fkMap.get(_lowerCase);
+                final String col = DBAccess.toSQLName(_name);
+                final Object value = resultSet.getObject(col);
+                final String pk_column = fkMap.get(col);
                 boolean _equals = Objects.equal(pk_column, null);
                 if (_equals) {
                   f.set(it, value);

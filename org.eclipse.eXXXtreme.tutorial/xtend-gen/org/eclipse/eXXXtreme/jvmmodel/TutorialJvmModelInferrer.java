@@ -28,6 +28,7 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor;
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder;
 import org.eclipse.xtext.xbase.lib.Extension;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
+import org.eclipse.xtext.xbase.lib.StringExtensions;
 
 /**
  * <p>Infers a JVM model from the source model.</p>
@@ -216,7 +217,7 @@ public class TutorialJvmModelInferrer extends AbstractModelInferrer {
         for (final ColumnInfo column : _columns) {
           {
             String _name_2 = column.getName();
-            final String columnName = _name_2.toLowerCase();
+            final String columnName = StringExtensions.toFirstLower(_name_2);
             EList<JvmMember> _members = it.getMembers();
             String _typeName = column.getTypeName();
             JvmTypeReference _typeRef_1 = this._typeReferenceBuilder.typeRef(_typeName);

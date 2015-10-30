@@ -129,7 +129,7 @@ public class H2MetaDataAccess {
     }
   }
   
-  private String toCamelCase(final String name) {
+  public String toCamelCase(final String name) {
     return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name);
   }
   
